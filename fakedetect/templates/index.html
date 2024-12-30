@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detection</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Fake News Detection Tool</h1>
+        <form id="newsForm">
+            <textarea id="newsText" name="news_text" rows="5" placeholder="Enter the news article text here..." required></textarea>
+            <button type="submit">Check News</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("newsForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const newsText = document.getElementById("newsText").value;
+            const formData = new FormData();
+            formData.append("news_text", newsText);
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById("result");
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `<p class="success">Prediction: ${data.result}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
